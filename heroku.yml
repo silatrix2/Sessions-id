@@ -1,0 +1,208 @@
+# SILATRIX-MD Heroku Deployment Configuration
+# Sila Tech Production Setup
+
+# Build configuration
+build:
+  docker:
+    web: Dockerfile
+  languages:
+    - nodejs
+
+  # Buildpacks for Heroku
+  buildpacks:
+    - heroku/nodejs
+
+  # Environment variables during build
+  env:
+    NODE_ENV: production
+    NPM_CONFIG_PRODUCTION: false
+    YARN_PRODUCTION: false
+
+# Run configuration
+run:
+  web: npm start
+
+  # Process configuration
+  processes:
+    web:
+      command: npm start
+      instances: 1
+      memory: 512MB
+      # Note: Free dynos have limited memory
+
+# Release phase (runs after build, before deployment)
+release:
+  image: heroku/nodejs
+  command:
+    - echo "Running release phase for SILATRIX-MD"
+    - npm run build --if-present
+
+# Development environment configuration
+development:
+  processes:
+    web:
+      command: npm run dev
+      instances: 1
+
+# Test environment configuration
+test:
+  processes:
+    web:
+      command: npm test
+      instances: 1
+
+# Addons configuration
+addons:
+  - plan: heroku-redis:hobby-dev
+    as: REDIS
+
+  - plan: heroku-postgresql:hobby-dev
+    as: DATABASE
+
+# Environment variables
+env:
+  # Application settings
+  NODE_ENV: production
+  PORT: 3000
+  SESSION_TIMEOUT: 1800000
+  MAX_SESSIONS: 10
+  
+  # Security settings
+  ENABLE_HTTPS: true
+  TRUST_PROXY: 1
+  
+  # Logging settings
+  LOG_LEVEL: info
+  ENABLE_DEBUG: false
+
+  # Performance settings
+  WEB_CONCURRENCY: 1
+  NODE_OPTIONS: --max_old_space_size=512
+
+# Formation (dyno configuration)
+formation:
+  web:
+    quantity: 1
+    size: free
+    # For production, consider upgrading to hobby or professional dynos
+
+# Health check configuration
+healthcheck:
+  path: /health
+  initial_delay: 10
+  period: 5
+  timeout: 3
+  success_threshold: 1
+  failure_threshold: 3
+
+# Database configuration (if using Heroku Postgres)
+database:
+  version: 13
+  plan: hobby-dev
+  pool:
+    min: 2
+    max: 10
+
+# Redis configuration (if using Heroku Redis)
+redis:
+  plan: hobby-dev
+  maxmemory-policy: allkeys-lru
+
+# Build cache configuration
+cache:
+  paths:
+    - node_modules/
+    - sessions/
+    - .npm
+
+# Scripts for different environments
+scripts:
+  postdeploy: |
+    echo "SILATRIX-MD deployed successfully!"
+    echo "Sila Tech Automation Ecosystem is live ??"
+    
+  preboot: |
+    echo "Starting SILATRIX-MD server..."
+    echo "Checking system requirements..."
+    
+  postboot: |
+    echo "Server started successfully!"
+    echo "Access your bot at: https://$(heroku apps:info -s | grep web_url | cut -d= -f2)"
+
+# Monitoring and metrics
+metrics:
+  enabled: true
+  frequency: 60
+
+# Maintenance mode configuration
+maintenance:
+  page: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <title>SILATRIX-MD Maintenance</title>
+      <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 50px; }
+        h1 { color: #8a2be2; }
+      </style>
+    </head>
+    <body>
+      <h1>?? Maintenance in Progress</h1>
+      <p>SILATRIX-MD is currently undergoing maintenance.</p>
+      <p>Please check back soon. Thank you for your patience!</p>
+      <p>Sila Tech Team</p>
+    </body>
+    </html>
+
+# Backup configuration
+backup:
+  schedule: daily
+  retain: 30
+
+# Notifications
+notifications:
+  - level: production
+    channel: email
+    events: [deploy, error, maintenance]
+
+# Deployment hooks
+deploy:
+  pre:
+    - echo "Starting deployment of SILATRIX-MD"
+    - npm ci --only=production
+    
+  post:
+    - echo "Deployment completed successfully!"
+    - echo "Sending deployment notification..."
+    
+  rollback:
+    command: |
+      echo "Rolling back deployment..."
+      heroku releases:rollback -a $HEROKU_APP_NAME
+
+# Review app configuration (for pull requests)
+review:
+  environments:
+    - name: staging
+      script:
+        - npm run test
+        - npm run build
+      env:
+        NODE_ENV: test
+        ENABLE_DEBUG: true
+
+# Pipeline configuration
+pipeline:
+  stages:
+    - test
+    - review
+    - staging
+    - production
+
+# Meta information
+meta:
+  version: 1.0.0
+  description: "SILATRIX-MD WhatsApp Bot Deployment"
+  maintainer: "Sila Tech Team"
+  support: "https://whatsapp.com/channel/0029Vb6DeKwCHDygxt0RXh0L"
+  documentation: "https://github.com/silatrix2/silatrix-md/wiki"
