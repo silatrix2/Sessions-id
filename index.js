@@ -22,9 +22,9 @@ const ensureDirectories = async () => {
   for (const dir of directories) {
     try {
       await fs.ensureDir(dir);
-      console.log(`? Directory created/verified: ${dir}`);
+      console.log(`✅ Directory created/verified: ${dir}`);
     } catch (error) {
-      console.error(`? Error creating directory ${dir}:`, error);
+      console.error(`❌ Error creating directory ${dir}:`, error);
     }
   }
 };
@@ -33,17 +33,62 @@ const ensureDirectories = async () => {
 app.use('/pair', pairRouter);
 app.use('/qr', qrRouter);
 
-// Serve main pages
+// Serve main pages with fallback
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'main.html'));
+  const filePath = path.join(__dirname, 'public', 'main.html');
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head><title>SILATRIX-MD</title></head>
+      <body>
+        <h1>SILATRIX-MD Server is Running</h1>
+        <p>API endpoints are available, but the main interface is not fully configured.</p>
+        <p><a href="/pair-page">Pairing Code</a> | <a href="/qr-page">QR Code</a></p>
+      </body>
+      </html>
+    `);
+  }
 });
 
 app.get('/pair-page', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'pair.html'));
+  const filePath = path.join(__dirname, 'public', 'pair.html');
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head><title>Pairing - SILATRIX-MD</title></head>
+      <body>
+        <h1>Pairing Interface</h1>
+        <p>This feature will be available once the interface is fully configured.</p>
+        <p><a href="/">Back to Home</a></p>
+      </body>
+      </html>
+    `);
+  }
 });
 
 app.get('/qr-page', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'qr.html'));
+  const filePath = path.join(__dirname, 'public', 'qr.html');
+  if (fs.existsSync(filePath)) {
+    res.sendFile(filePath);
+  } else {
+    res.send(`
+      <!DOCTYPE html>
+      <html>
+      <head><title>QR Pairing - SILATRIX-MD</title></head>
+      <body>
+        <h1>QR Pairing Interface</h1>
+        <p>This feature will be available once the interface is fully configured.</p>
+        <p><a href="/">Back to Home</a></p>
+      </body>
+      </html>
+    `);
+  }
 });
 
 // Health check endpoint
@@ -106,7 +151,7 @@ app.get('/api', (req, res) => {
 
 // Error handling middleware
 app.use((error, req, res, next) => {
-  console.error('?? Server Error:', error);
+  console.error('❌ Server Error:', error);
   
   res.status(500).json({
     success: false,
@@ -126,20 +171,20 @@ app.use('*', (req, res) => {
 
 // Graceful shutdown
 process.on('SIGINT', async () => {
-  console.log('\n?? Received SIGINT. Shutting down gracefully...');
+  console.log('\n🛑 Received SIGINT. Shutting down gracefully...');
   
   try {
     // Cleanup tasks here if needed
-    console.log('? Cleanup completed');
+    console.log('✅ Cleanup completed');
     process.exit(0);
   } catch (error) {
-    console.error('? Error during shutdown:', error);
+    console.error('❌ Error during shutdown:', error);
     process.exit(1);
   }
 });
 
 process.on('SIGTERM', async () => {
-  console.log('\n?? Received SIGTERM. Shutting down gracefully...');
+  console.log('\n🛑 Received SIGTERM. Shutting down gracefully...');
   process.exit(0);
 });
 
@@ -150,14 +195,14 @@ const startServer = async () => {
     
     app.listen(PORT, () => {
       console.log('\n' + '='.repeat(50));
-      console.log('?? SILATRIX-MD Server Started');
+      console.log('🚀 SILATRIX-MD Server Started');
       console.log('='.repeat(50));
-      console.log(`?? Port: ${PORT}`);
-      console.log(`?? URL: http://localhost:${PORT}`);
-      console.log(`?? Health: http://localhost:${PORT}/health`);
-      console.log(`?? Environment: ${process.env.NODE_ENV || 'development'}`);
-      console.log('?? Sila Tech Automation Ecosystem');
-      console.log('?? Channel: https://whatsapp.com/channel/0029Vb6DeKwCHDygxt0RXh0L');
+      console.log(`📡 Port: ${PORT}`);
+      console.log(`🌐 URL: http://localhost:${PORT}`);
+      console.log(`❤️ Health: http://localhost:${PORT}/health`);
+      console.log(`🔧 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log('🤖 Sila Tech Automation Ecosystem');
+      console.log('📢 Channel: https://whatsapp.com/channel/0029Vb6DeKwCHDygxt0RXh0L');
       console.log('='.repeat(50));
       
       // Initial cleanup of old sessions
@@ -166,7 +211,7 @@ const startServer = async () => {
           const sessionsDir = path.join(__dirname, 'sessions');
           if (await fs.pathExists(sessionsDir)) {
             const sessions = await fs.readdir(sessionsDir);
-            console.log(`?? Found ${sessions.length} sessions to clean up`);
+            console.log(`🧹 Found ${sessions.length} sessions to clean up`);
           }
         } catch (cleanupError) {
           console.log('Initial cleanup skipped');
@@ -175,19 +220,19 @@ const startServer = async () => {
     });
     
   } catch (error) {
-    console.error('? Failed to start server:', error);
+    console.error('❌ Failed to start server:', error);
     process.exit(1);
   }
 };
 
 // Handle uncaught exceptions
 process.on('uncaughtException', (error) => {
-  console.error('?? Uncaught Exception:', error);
+  console.error('💥 Uncaught Exception:', error);
   process.exit(1);
 });
 
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('?? Unhandled Rejection at:', promise, 'reason:', reason);
+  console.error('💥 Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
 // Start the server
