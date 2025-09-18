@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SILATRIX-MD - Sila Tech</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            color: white;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            padding: 40px 0;
+        }
+
+        .logo {
+            font-size: 3.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #00ff87, #60efff, #0061ff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+            text-shadow: 0 0 30px rgba(96, 239, 255, 0.3);
+        }
+
+        .tagline {
+            color: #ccc;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 150px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #00ff87;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #ccc;
+            font-size: 0.9rem;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .option-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .option-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .option-icon {
+            font-size: 3rem;
+            margin-bottom: 20px;
+            color: #60efff;
+        }
+
+        .option-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            color: #00ff87;
+        }
+
+        .option-description {
+            color: #ccc;
+            margin-bottom: 20px;
+            line-height: 1.6;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #00ff87, #60efff);
+            color: #0f0c29;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 255, 135, 0.3);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .features {
+            margin: 60px 0;
+            text-align: center;
+        }
+
+        .features h2 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+            color: #00ff87;
+        }
+
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-item {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 2.5rem;
+            color: #60efff;
+            margin-bottom: 15px;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 60px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .channel-link {
+            color: #60efff;
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 10px;
+        }
+
+        .channel-link:hover {
+            text-decoration: underline;
+        }
+
+        .powered-by {
+            margin-top: 20px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .logo {
+                font-size: 2.5rem;
+            }
+            
+            .options {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats {
+                gap: 15px;
+            }
+            
+            .stat-item {
+                min-width: 120px;
+                padding: 15px;
+            }
+        }
+
+        /* Animations */
+        @keyframes glow {
+            0% { text-shadow: 0 0 20px rgba(96, 239, 255, 0.5); }
+            50% { text-shadow: 0 0 30px rgba(0, 255, 135, 0.8); }
+            100% { text-shadow: 0 0 20px rgba(96, 239, 255, 0.5); }
+        }
+
+        .logo {
+            animation: glow 3s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="logo">SILATRIX-MD</div>
+            <div class="tagline">Sila Tech Automation Ecosystem</div>
+            
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number" id="totalSessions">0</div>
+                    <div class="stat-label">Total Sessions</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="activeSessions">0</div>
+                    <div class="stat-label">Active Now</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number" id="uptime">100%</div>
+                    <div class="stat-label">Uptime</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="options">
+            <div class="option-card" onclick="window.location.href='/pair-page'">
+                <div class="option-icon">
+                    <i class="fas fa-key"></i>
+                </div>
+                <h3 class="option-title">Pairing Code</h3>
+                <p class="option-description">
+                    Generate a numeric pairing code to link your WhatsApp account instantly.
+                    Perfect for quick setup and automatic connection.
+                </p>
+                <button class="btn">Get Pairing Code</button>
+            </div>
+
+            <div class="option-card" onclick="window.location.href='/qr-page'">
+                <div class="option-icon">
+                    <i class="fas fa-qrcode"></i>
+                </div>
+                <h3 class="option-title">QR Code</h3>
+                <p class="option-description">
+                    Scan a QR code from your WhatsApp mobile app to establish
+                    a secure connection with your bot.
+                </p>
+                <button class="btn">Scan QR Code</button>
+            </div>
+        </div>
+
+        <div class="features">
+            <h2>Why Choose SILATRIX-MD?</h2>
+            <div class="feature-grid">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure</h3>
+                    <p>End-to-end encryption and secure session management</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Fast</h3>
+                    <p>Lightning-fast response times and reliable performance</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-infinity"></i>
+                    </div>
+                    <h3>24/7</h3>
+                    <p>Always available with automatic failover and recovery</p>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3>Powerful</h3>
+                    <p>Advanced features and customization options</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>
+                Join our official channels for updates and support:
+                <a href="https://whatsapp.com/channel/0029Vb6DeKwCHDygxt0RXh0L" 
+                   class="channel-link" target="_blank">
+                   WhatsApp Channel
+                </a>
+                |
+                <a href="https://github.com/silatrix2" class="channel-link" target="_blank">
+                   GitHub
+                </a>
+            </p>
+            <p class="powered-by">
+                Powered by Sila Tech Automation Ecosystem  2025
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Update stats dynamically
+        async function updateStats() {
+            try {
+                const response = await fetch('/status');
+                const data = await response.json();
+                
+                document.getElementById('totalSessions').textContent = data.activeSessions || '0';
+                document.getElementById('activeSessions').textContent = data.activeSessions || '0';
+                document.getElementById('uptime').textContent = '100%';
+                
+            } catch (error) {
+                console.log('Could not fetch stats');
+            }
+        }
+
+        // Initial load
+        updateStats();
+        
+        // Update every 30 seconds
+        setInterval(updateStats, 30000);
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            const cards = document.querySelectorAll('.option-card');
+            cards.forEach((card, index) {
+                card.style.animationDelay = `${index * 0.1}s`;
+            });
+        });
+    </script>
+</body>
+</html>
