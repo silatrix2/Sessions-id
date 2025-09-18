@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SILATRIX-MD - WhatsApp Pairing</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #ccc;
+            margin-bottom: 25px;
+            font-size: 1rem;
+        }
+
+        .input-container {
+            margin-bottom: 20px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: #4ecdc4;
+        }
+
+        .input-field::placeholder {
+            color: #888;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+            width: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .status.loading {
+            background: rgba(78, 205, 196, 0.1);
+            color: #4ecdc4;
+            border: 1px solid rgba(78, 205, 196, 0.3);
+        }
+
+        .status.success {
+            background: rgba(255, 107, 107, 0.1);
+            color: #ff6b6b;
+            border: 1px solid rgba(255, 107, 107, 0.3);
+        }
+
+        .status.error {
+            background: rgba(255, 0, 0, 0.1);
+            color: #ff4444;
+            border: 1px solid rgba(255, 0, 0, 0.3);
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .code {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4ecdc4;
+            margin: 10px 0;
+            letter-spacing: 2px;
+        }
+
+        .footer {
+            margin-top: 25px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .channel-link {
+            color: #4ecdc4;
+            text-decoration: none;
+        }
+
+        .channel-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">SILATRIX-MD</div>
+        <p class="subtitle">Sila Tech WhatsApp Pairing System</p>
+        
+        <div class="input-container">
+            <input 
+                type="text" 
+                id="phoneNumber" 
+                class="input-field" 
+                placeholder="Enter WhatsApp number with country code"
+                onkeypress="handleKeyPress(event)"
+            >
+        </div>
+
+        <button onclick="generatePairingCode()" class="btn">Generate Pairing Code</button>
+        
+        <div id="status" class="status"></div>
+        <div id="result" class="result" style="display: none;">
+            <h3>Pairing Code Generated</h3>
+            <div class="code" id="pairingCode"></div>
+            <p>Use this code to link your WhatsApp account</p>
+        </div>
+
+        <div class="footer">
+            <p>Join our channel: 
+                <a href="https://whatsapp.com/channel/0029Vb6DeKwCHDygxt0RXh0L" 
+                   class="channel-link" target="_blank">
+                   Sila Tech Updates
+                </a>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function handleKeyPress(event) {
+            if (event.key === 'Enter') {
+                generatePairingCode();
+            }
+        }
+
+        async function generatePairingCode() {
+            const phoneNumber = document.getElementById('phoneNumber').value.trim();
+            const statusEl = document.getElementById('status');
+            const resultEl = document.getElementById('result');
+            const codeEl = document.getElementById('pairingCode');
+
+            // Validate input
+            if (!phoneNumber) {
+                showStatus('Please enter your WhatsApp number', 'error');
+                return;
+            }
+
+            // Clean the number (remove non-digits)
+            const cleanNumber = phoneNumber.replace(/[^0-9]/g, '');
+            
+            if (cleanNumber.length < 8) {
+                showStatus('Invalid phone number format', 'error');
+                return;
+            }
+
+            // Show loading status
+            showStatus('Generating pairing code...', 'loading');
+            resultEl.style.display = 'none';
+
+            try {
+                const response = await fetch('/pair', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ number: cleanNumber })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showStatus('Pairing code generated successfully!', 'success');
+                    codeEl.textContent = data.code;
+                    resultEl.style.display = 'block';
+                } else {
+                    showStatus(data.message || 'Failed to generate code', 'error');
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus('Connection error. Please try again.', 'error');
+            }
+        }
+
+        function showStatus(message, type) {
+            const statusEl = document.getElementById('status');
+            statusEl.textContent = message;
+            statusEl.className = `status ${type}`;
+            statusEl.style.display = 'block';
+        }
+    </script>
+</body>
+</html>
