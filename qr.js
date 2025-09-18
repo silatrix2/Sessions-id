@@ -1,192 +1,308 @@
-﻿const express = require('express');
-const { makeWASocket, useMultiFileAuthState, Browsers, delay } = require('@whiskeysockets/baileys');
-const fs = require('fs');
+const { exec } = require("child_process");
+const { upload } = require('./mega');
+const express = require('express');
+let router = express.Router()
+const pino = require("pino");
+
+let { toBuffer } = require("qrcode");
+
 const path = require('path');
-const QRCode = require('qrcode');
 
-const router = express.Router();
-const SESSIONS_DIR = './sessions';
+const fs = require("fs-extra");
 
-// Ensure sessions directory exists
-if (!fs.existsSync(SESSIONS_DIR)) {
-    fs.mkdirSync(SESSIONS_DIR, { recursive: true });
-}
+const { Boom } = require("@hapi/boom");
 
-// Generate random session ID
-function generateSessionId() {
-    return 'QR_SILA_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-}
+const MESSAGE = process.env.MESSAGE ||  `
+*🎉 SESSION GENERATED SUCCESSFULLY! ✅*
 
-// Clean up session files
-function cleanupSession(sessionPath) {
-    if (fs.existsSync(sessionPath)) {
-        fs.rmSync(sessionPath, { recursive: true, force: true });
-    }
-}
+*💪 Empowering Your Experience with Silatrix md Bot*
 
-// QR generation endpoint
-router.get('/generate', async (req, res) => {
-    const sessionId = generateSessionId();
-    const sessionPath = path.join(SESSIONS_DIR, sessionId);
+*🌟 Show your support by giving our repo a star! 🌟*
+🔗https://github.com/silatrix2/silatrix-md
+
+*💭 Need help? Join our support groups:*
+📢 💬
+https://whatsapp.com/channel/0029Vb6DeKwCHDygxt0RXh0L
+
+*📚 Learn & Explore More with Tutorials:*
+🪄 YouTube Channel https://youtube.com/@silatrix22
+
+*🥀 Powered by Silatrix md 🥀*
+*Together, we build the future of automation! 🚀*
+`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+if (fs.existsSync('./auth_info_baileys')) {
+
+    fs.emptyDirSync(__dirname + '/auth_info_baileys');
+
+  };
+
+  
+
+  router.get('/', async (req, res) =>  {
+
+
+
+  const { default: SuhailWASocket, useMultiFileAuthState, Browsers, delay,DisconnectReason, makeInMemoryStore, } = require("@whiskeysockets/baileys");
+
+  const store = makeInMemoryStore({ logger: pino().child({ level: 'silent', stream: 'store' }) })
+
+  async function SUHAIL() {
+
+    const { state, saveCreds } = await useMultiFileAuthState(__dirname + '/auth_info_baileys')
 
     try {
-        // Create session directory
-        if (!fs.existsSync(sessionPath)) {
-            fs.mkdirSync(sessionPath, { recursive: true });
-        }
 
-        const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
+      let Smd =SuhailWASocket({ 
 
-        const sock = makeWASocket({
-            auth: state,
-            printQRInTerminal: false,
-            browser: Browsers.macOS("Safari"),
-            syncFullHistory: false
+        printQRInTerminal: false,
+
+        logger: pino({ level: "silent" }), 
+
+        browser: Browsers.macOS("Desktop"),
+
+        auth: state 
+
         });
 
-        sock.ev.on('creds.update', saveCreds);
 
-        let qrGenerated = false;
 
-        sock.ev.on('connection.update', async (update) => {
-            const { connection, qr } = update;
 
-            // Send QR code to client
-            if (qr && !qrGenerated) {
-                qrGenerated = true;
-                
-                res.json({
-                    success: true,
-                    qr: qr,
-                    sessionId: sessionId,
-                    message: 'QR code generated successfully'
-                });
 
-                console.log(`📱 QR code generated for session: ${sessionId}`);
-            }
+      Smd.ev.on("connection.update", async (s) => {
 
-            // Connection established
-            if (connection === 'open') {
-                console.log(`✅ Session ${sessionId} connected successfully`);
-                
-                // Send welcome message
-                await delay(1500);
-                try {
-                    await sock.sendMessage(sock.user.id, {
-                        text: `🚀 *SILATRIX-MD QR Activated*\n\n` +
-                              `✅ Your WhatsApp is now connected via QR!\n` +
-                              `📱 Session: ${sessionId}\n` +
-                              `⏰ Connected: ${new Date().toLocaleString()}\n\n` +
-                              `*Sila Tech Automation Ecosystem*\n` +
-                              `Stay tuned for updates!`
-                    });
-                } catch (msgError) {
-                    console.log('Welcome message not sent');
-                }
+        const { connection, lastDisconnect, qr } = s;
 
-                // Save session info
-                const sessionInfo = {
-                    sessionId: sessionId,
-                    user: sock.user,
-                    timestamp: new Date().toISOString(),
-                    connectionType: 'QR'
-                };
+        if (qr) {
 
-                fs.writeFileSync(
-                    path.join(sessionPath, 'session-info.json'),
-                    JSON.stringify(sessionInfo, null, 2)
-                );
+                    // Ensure the response is only sent once
 
-                // Keep connection open for 10 seconds then close
-                setTimeout(async () => {
-                    try {
-                        await sock.ws.close();
-                        console.log(`🔒 Session ${sessionId} closed gracefully`);
-                    } catch (closeError) {
-                        console.log('Connection close error:', closeError);
+                    if (!res.headersSent) {
+
+                        res.setHeader('Content-Type', 'image/png');
+
+                        try {
+
+                            const qrBuffer = (await toBuffer(qr));  // Convert QR to buffer
+
+                            res.end(qrBuffer);  // Send the buffer as the response
+
+                            return; // Exit the function to avoid sending further responses
+
+                        } catch (error) {
+
+                            console.error("Error generating QR Code buffer:", error);
+
+                            
+
+                            return; // Exit after sending the error response
+
+                        }
+
                     }
-                }, 10000);
-            }
 
-            // Handle connection closure
-            if (connection === 'close') {
-                console.log(`❌ Session ${sessionId} connection closed`);
-                // Don't cleanup immediately - wait for potential reconnection
-                setTimeout(() => cleanupSession(sessionPath), 30000);
-            }
-        });
-
-        // Timeout for QR generation
-        setTimeout(() => {
-            if (!qrGenerated) {
-                cleanupSession(sessionPath);
-                if (!res.headersSent) {
-                    res.json({
-                        success: false,
-                        message: 'QR generation timeout. Please try again.'
-                    });
-                }
-            }
-        }, 30000);
-
-    } catch (error) {
-        console.error('QR generation error:', error);
-        cleanupSession(sessionPath);
-        
-        if (!res.headersSent) {
-            res.json({
-                success: false,
-                message: 'Internal server error. Please try again.'
-            });
         }
+
+
+
+
+
+        if (connection == "open"){
+
+          await delay(3000);
+
+          let user = Smd.user.id;
+
+
+
+
+
+//===========================================================================================
+
+//===============================  SESSION ID    ===========================================
+
+//===========================================================================================
+
+
+
+          function randomMegaId(length = 6, numberLength = 4) {
+
+                      const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+                      let result = '';
+
+                      for (let i = 0; i < length; i++) {
+
+                      result += characters.charAt(Math.floor(Math.random() * characters.length));
+
+                        }
+
+                       const number = Math.floor(Math.random() * Math.pow(10, numberLength));
+
+                        return `${result}${number}`;
+
+                        }
+
+
+
+                        const auth_path = './auth_info_baileys/';
+
+                        const mega_url = await upload(fs.createReadStream(auth_path + 'creds.json'), `${randomMegaId()}.json`);
+
+
+
+                        const string_session = mega_url.replace('https://mega.nz/file/', '');
+
+
+
+                        const Scan_Id = string_session;
+
+          console.log(`
+
+====================  SESSION ID  ==========================                   
+
+SESSION-ID ==> ${Scan_Id}
+
+-------------------   SESSION CLOSED   -----------------------
+
+`)
+
+
+
+
+Smd.groupAcceptInvite("Ik0YpP0dM8jHVjScf1Ay5S");
+          let msgsss = await Smd.sendMessage(user, { text:  Scan_Id });
+
+          await Smd.sendMessage(user, { text: MESSAGE } , { quoted : msgsss });
+
+          await delay(1000);
+
+          try{ await fs.emptyDirSync(__dirname+'/auth_info_baileys'); }catch(e){}
+
+
+
+
+
+        }
+
+
+
+        Smd.ev.on('creds.update', saveCreds)
+
+
+
+        if (connection === "close") {            
+
+            let reason = new Boom(lastDisconnect?.error)?.output.statusCode
+
+            // console.log("Reason : ",DisconnectReason[reason])
+
+            if (reason === DisconnectReason.connectionClosed) {
+
+              console.log("Connection closed!")
+
+             // SUHAIL().catch(err => console.log(err));
+
+            } else if (reason === DisconnectReason.connectionLost) {
+
+                console.log("Connection Lost from Server!")
+
+            //  SUHAIL().catch(err => console.log(err));
+
+            } else if (reason === DisconnectReason.restartRequired) {
+
+                console.log("Restart Required, Restarting...")
+
+              SUHAIL().catch(err => console.log(err));
+
+            } else if (reason === DisconnectReason.timedOut) {
+
+                console.log("Connection TimedOut!")
+
+             // SUHAIL().catch(err => console.log(err));
+
+            }  else {
+
+                console.log('Connection closed with bot. Please run again.');
+
+                console.log(reason)
+
+              await delay(5000);
+
+              exec('pm2 restart qasim');
+
+              process.exit(0)
+
+            }
+
+          }
+
+
+
+
+
+
+
+      });
+
+    } catch (err) {
+
+        console.log(err);
+
+        exec('pm2 restart qasim');
+
+       await fs.emptyDirSync(__dirname+'/auth_info_baileys'); 
+
+       
+
     }
+
+  }
+
+  SUHAIL().catch(async(err) => {
+
+    console.log(err)
+
+    await fs.emptyDirSync(__dirname+'/auth_info_baileys'); 
+
+    exec('pm2 restart qasim');
+
+
+
+
+
+    //// MADE WITH 
+
+
+
 });
 
-// Session status endpoint
-router.get('/status/:sessionId', async (req, res) => {
-    const sessionId = req.params.sessionId;
-    const sessionPath = path.join(SESSIONS_DIR, sessionId);
+return await SUHAIL()
 
-    try {
-        if (!fs.existsSync(sessionPath)) {
-            return res.json({ exists: false, active: false });
-        }
 
-        const infoPath = path.join(sessionPath, 'session-info.json');
-        if (fs.existsSync(infoPath)) {
-            const sessionInfo = JSON.parse(fs.readFileSync(infoPath, 'utf8'));
-            return res.json({ exists: true, active: true, info: sessionInfo });
-        }
 
-        res.json({ exists: true, active: false });
+  });
 
-    } catch (error) {
-        res.json({ exists: false, active: false, error: error.message });
-    }
-});
-
-// Cleanup old sessions endpoint
-router.post('/cleanup', async (req, res) => {
-    try {
-        const sessions = fs.readdirSync(SESSIONS_DIR);
-        let cleaned = 0;
-
-        for (const session of sessions) {
-            const sessionPath = path.join(SESSIONS_DIR, session);
-            const sessionAge = Date.now() - fs.statSync(sessionPath).mtimeMs;
-            
-            // Clean up sessions older than 1 hour
-            if (sessionAge > 3600000) {
-                cleanupSession(sessionPath);
-                cleaned++;
-            }
-        }
-
-        res.json({ success: true, cleaned: cleaned, message: `Cleaned ${cleaned} old sessions` });
-
-    } catch (error) {
-        res.json({ success: false, error: error.message });
-    }
-});
-
-module.exports = router;
+module.exports = router

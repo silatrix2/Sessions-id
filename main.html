@@ -1,359 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SILATRIX-MD | Session</title>
-    <meta property="og:image" content="https://i.imgur.com/HQ8CENR.jpeg">
-    <meta property="og:title" content="SILATRIX-MD">
-<style>
-  body {
-   display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 75vh;
-    flex-direction: column;
-    background-color:#000
-  }
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Hunter xmd - Streamlined QR Code and Pairing Features">
+  <meta name="author" content="Hunter xmd">
+  <title>SILATRIX-MD SESSIONS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #00e6b8;
+      --primary-dark: #00a97f;
+      --secondary: #1a1a2e;
+      --background: #0f0f17;
+      --card-bg: #161622;
+      --text: #f0f0f0;
+      --text-muted: #a0a0a0;
+    }
 
-  #main {
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      background: var(--background);
+      color: var(--text);
+      font-family: 'Poppins', sans-serif;
+      background-image: 
+        radial-gradient(circle at 25% 25%, rgba(0, 230, 184, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 75% 75%, rgba(0, 169, 127, 0.1) 0%, transparent 50%);
+      background-attachment: fixed;
+    }
+
+    .container {
       text-align: center;
-  }
-
-  h1 {
-      font-size: 200%;
-      color: #ffffff;
-  }
-
-  h3 {
-      font-weight: 200;
-      color: #ffffff;
-  }
-
-  h1, h3 {
-      letter-spacing: 0.05em;
-  }
-
-  .h {
-    font-family: "Montserrat Medium";
-    max-width: 40ch;
-    color: #ffffff;
-    position: relative;
-    text-align: top;
-    transform: scale(0.94);
-    animation: scale 3s forwards cubic-bezier(0.5, 1, 0.89, 1);
-  }
-  @keyframes scale {
-    100% {
-      transform: scale(1);
-    }
-  }
-
-  span {
-    display: inline-block;
-    opacity: 0;
-    filter: blur(4px);
-  }
-
-  span:nth-child(1) {
-    animation: fade-in 0.8s 0.1s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(2) {
-    animation: fade-in 0.8s 0.2s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(3) {
-    animation: fade-in 0.8s 0.3s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(4) {
-    animation: fade-in 0.8s 0.4s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(5) {
-    animation: fade-in 0.8s 0.5s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(6) {
-    animation: fade-in 0.8s 0.6s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(7) {
-    animation: fade-in 0.8s 0.7s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(8) {
-    animation: fade-in 0.8s 0.8s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(9) {
-    animation: fade-in 0.8s 0.9s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(10) {
-    animation: fade-in 0.8s 1s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(11) {
-    animation: fade-in 0.8s 1.1s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(12) {
-    animation: fade-in 0.8s 1.2s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(13) {
-    animation: fade-in 0.8s 1.3s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(14) {
-    animation: fade-in 0.8s 1.4s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(15) {
-    animation: fade-in 0.8s 1.5s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(16) {
-    animation: fade-in 0.8s 1.6s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(17) {
-    animation: fade-in 0.8s 1.7s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  span:nth-child(18) {
-    animation: fade-in 0.8s 1.8s forwards cubic-bezier(0.11, 0, 0.5, 0);
-  }
-
-  @keyframes fade-in {
-    100% {
-      opacity: 1;
-      filter: blur(0);
-    }
-  }
-
-
-  .btn {
-    --border-color: linear-gradient(-45deg, #ffae00, #7e03aa, #00fffb);
-    --border-width: .125em;
-    --curve-size: .5em;
-    --blur: 30px;
-    --bg: #080312;
-    --color: #afffff;
-    color: var(--color);
-      /* use position: relative; so that BG is only for .btn */
-    position: relative;
-    isolation: isolate;
-    display: inline-grid;
-    text-align: center;
-    place-content: center;
-    padding: .5em 1.5em;
-    font-size: 17px;
-    border: 0;
-    text-transform: uppercase;
-    box-shadow: 10px 10px 20px rgba(0, 0, 0, .6);
-    clip-path: polygon(
-              /* Top-left */
-              0% var(--curve-size),
-
-              var(--curve-size) 0,
-              /* top-right */
-              100% 0,
-              100% calc(100% - var(--curve-size)),
-
-              /* bottom-right 1 */
-              calc(100% - var(--curve-size)) 100%,
-              /* bottom-right 2 */
-              0 100%);
-    transition: color 250ms;
-  }
-
-  .btn::after,
-  .btn::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-  }
-
-  .btn::before {
-    background: var(--border-color);
-    background-size: 300% 300%;
-    animation: move-bg7234 5s ease infinite;
-    z-index: -2;
-  }
-
-  @keyframes move-bg7234 {
-    0% {
-      background-position: 31% 0%
+      padding: 2rem;
+      max-width: 800px;
+      width: 90%;
     }
 
-    50% {
-      background-position: 70% 100%
+    .logo {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 1.5rem;
+      filter: drop-shadow(0 0 10px rgba(0, 230, 184, 0.3));
     }
 
-    100% {
-      background-position: 31% 0%
-    }
-  }
-
-  .btn::after {
-    background: var(--bg);
-    z-index: -1;
-    clip-path: polygon(
-              /* Top-left */
-              var(--border-width) 
-              calc(var(--curve-size) + var(--border-width) * .5),
-
-              calc(var(--curve-size) + var(--border-width) * .5) var(--border-width),
-
-              /* top-right */
-              calc(100% - var(--border-width)) 
-              var(--border-width),
-
-              calc(100% - var(--border-width)) 
-              calc(100% - calc(var(--curve-size) + var(--border-width) * .5)),
-
-              /* bottom-right 1 */
-              calc(100% - calc(var(--curve-size) + var(--border-width) * .5)) calc(100% - var(--border-width)),
-              /* bottom-right 2 */
-              var(--border-width) calc(100% - var(--border-width)));
-    transition: clip-path 500ms;
-  }
-
-  .btn:where(:hover, :focus)::after {
-    clip-path: polygon(
-                  /* Top-left */
-                  calc(100% - var(--border-width)) 
-
-                  calc(100% - calc(var(--curve-size) + var(--border-width) * 0.5)),
-
-                  calc(100% - var(--border-width))
-
-                  var(--border-width),
-
-                  /* top-right */
-                  calc(100% - var(--border-width))
-
-                   var(--border-width),
-
-                  calc(100% - var(--border-width)) 
-
-                  calc(100% - calc(var(--curve-size) + var(--border-width) * .5)),
-
-                  /* bottom-right 1 */
-                  calc(100% - calc(var(--curve-size) + var(--border-width) * .5)) 
-                  calc(100% - var(--border-width)),
-
-                  /* bottom-right 2 */
-                  calc(100% - calc(var(--curve-size) + var(--border-width) * 0.5))
-                  calc(100% - var(--border-width)));
-    transition: 200ms;
-  }
-
-  .btn:where(:hover, :focus) {
-    color: #fff;
-  }
-  .button {
-    width: 200px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    padding: 0px 15px;
-    background-color: red;
-    border-radius: 10px;
-    border: none;
-    color: white;
-    position: relative;
-    cursor: pointer;
-    font-weight: 900;
-    transition-duration: .2s;
-    background: linear-gradient(0deg, #000, #272727);
-    margin: 10px auto;
-  }
-
-  .button:before, .button:after {
-    content: '';
-    position: absolute;
-    left: -2px;
-    top: -2px;
-    border-radius: 10px;
-    background: linear-gradient(45deg, #fb0094, #0000ff, #00ff00,#ffff00, #ff0000, #fb0094, 
-      #0000ff, #00ff00,#ffff00, #ff0000);
-    background-size: 400%;
-    width: calc(100% + 4px);
-    height: calc(100% + 4px);
-    z-index: -1;
-    animation: steam 20s linear infinite;
-  }
-
-  @keyframes steam {
-    0% {
-      background-position: 0 0;
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      background: linear-gradient(90deg, var(--primary), var(--primary-dark));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      font-weight: 700;
+      letter-spacing: -0.5px;
     }
 
-    50% {
-      background-position: 400% 0;
+    .subtitle {
+      font-size: 1.1rem;
+      color: var(--text-muted);
+      margin-bottom: 2.5rem;
+      font-weight: 300;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
     }
 
-    100% {
-      background-position: 0 0;
+    .btn-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.2rem;
+      width: 100%;
+      margin-top: 2rem;
     }
-  }
 
-  .button:after {
-    filter: blur(50px);
-  }
+    .btn {
+      position: relative;
+      padding: 1.2em 1.5em;
+      background: transparent;
+      border-radius: 12px;
+      border: none;
+      color: var(--text);
+      font-size: 1rem;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      overflow: hidden;
+      transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+      z-index: 1;
+      box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+      backdrop-filter: blur(5px);
+      background-color: rgba(30, 30, 40, 0.5);
+    }
 
-  footer {
-      position: fixed;
-      bottom: 0;
+    .btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
       left: 0;
       width: 100%;
-      background-color: #000;
-      text-align: center;
-      padding: 10px;
-      color: #fff;
-      font-size: 14px;
-  }
+      height: 100%;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      z-index: -1;
+      clip-path: circle(0% at 50% 50%);
+      transition: clip-path 0.6s cubic-bezier(0.65, 0, 0.35, 1);
+    }
 
+    .btn:hover::before {
+      clip-path: circle(100% at 50% 50%);
+    }
+
+    .btn:hover {
+      color: var(--secondary);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 230, 184, 0.3);
+    }
+
+    .footer {
+      margin-top: 3rem;
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    @media (max-width: 768px) {
+      h1 {
+        font-size: 2rem;
+      }
+      .subtitle {
+        font-size: 1rem;
+      }
+      .btn-grid {
+        grid-template-columns: 1fr;
+      }
+    }
   </style>
-  </head>
-  <body>
-    <div id="main">
-      <br><br>
-      <h1 class="h">
-        <span>SILATRIX</span>
-        <span>-</span>
-        <span>MD</span>
-        <span>WHATSAPP</span>
-        <span>BOT</span>
-      </h1>
-      <h3 class="h">
-        <span>Select Session Method</span>
-      </h3>
-        <input hidden type="text" name="value" value="silatrix-md">
-        <br><br>
-        <button onclick="location.href='/qr-page'" class="button">QR CODE</button>
-        <br>
-       <button onclick="location.href='/pair-page'" class="button">PAIR CODE</button>
-        <br>
-      <button onclick="location.href='https://github.com/silatrix2/Silatrix-md'" class="button">GITHUB REPO</button>
-        <br>
-            <button onclick="location.href='https://wa.me/+255768840399'" class="button">CONTACT OWNER</button>
-       <br>
-       <button onclick="location.href='https://whatsapp.com/channel/0029Vb6DeKwCHDygxt0RXh0L'" class="button">WHATSAPP CHANNEL</button>
-         <br>
-        <button onclick="location.href='https://github.com/silatrix2'" class="button">GITHUB PROFILE</button>
-       <br>
-      <button onclick="location.href='https://silatrix2.github.io'" class="button">WEBSITE</button>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <div class="container">
+    <svg class="logo" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+    </svg>
+    <h1>sir bravin pair site Tools</h1>
+    <p class="subtitle">Streamlined solutions for your digital workflow</p>
+    
+    <div class="btn-grid">
+      <button onclick="window.open('/qr', '_self')" class="btn">
+        <i class="fas fa-qrcode"></i> QR Code
+      </button>
+      <button onclick="window.open('/pair', '_self')" class="btn">
+        <i class="fas fa-link"></i> Pair Code
+      </button>
+      <button onclick="window.open('https://github.com/silatrix2/silatrix-md', '_blank')" class="btn">
+        <i class="fab fa-github"></i> GitHub
+      </button>
+      <button onclick="window.open('https://whatsapp.com/channel/0029Vb6DeKwCHDygxt0RXh0L', '_blank')" class="btn">
+        <i class="fab fa-whatsapp"></i> WhatsApp
+      </button>
     </div>
-    <footer>
-       <p>© 2025 SILATRIX-MD | Sila Tech Automation Ecosystem</p>
-    </footer>
-  </body>
-  </html>
+    
+    <p class="footer">© 2025 sir sila Inc. All rights reserved.</p>
+  </div>
+
+  <script>
+    // Smooth hover effect enhancement
+    document.querySelectorAll('.btn').forEach(btn => {
+      btn.addEventListener('mousemove', (e) => {
+        const rect = btn.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        btn.style.setProperty('--mouse-x', `${x}px`);
+        btn.style.setProperty('--mouse-y', `${y}px`);
+      });
+    });
+  </script>
+</body>
+</html>

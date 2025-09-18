@@ -1,140 +1,200 @@
+
+const { giftedid } = require('./id');
 const express = require('express');
-const { makeWASocket, useMultiFileAuthState, Browsers, delay } = require('@whiskeysockets/baileys');
 const fs = require('fs');
-const path = require('path');
+let router = express.Router();
+const pino = require("pino");
+const { Storage, File } = require("megajs");
 
-const router = express.Router();
-const SESSIONS_DIR = './sessions';
+const {
+    default: Sila_Tech,
+    useMultiFileAuthState,
+    delay,
+    makeCacheableSignalKeyStore,
+    Browsers
+} = require("@whiskeysockets/baileys");
 
-// Ensure sessions directory exists
-if (!fs.existsSync(SESSIONS_DIR)) {
-    fs.mkdirSync(SESSIONS_DIR, { recursive: true });
+function randomMegaId(length = 6, numberLength = 4) {
+    const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+    let result = '';
+    for (let i = 0; i < length; i++) {
+        result += characters.charAt(Math.floor(Math.random() * characters.length));
+    }
+    const number = Math.floor(Math.random() * Math.pow(10, numberLength));
+    return `${result}${number}`;
 }
 
-// Generate random session ID
-function generateSessionId() {
-    return 'SILA_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-}
-
-// Clean up session files
-function cleanupSession(sessionPath) {
-    if (fs.existsSync(sessionPath)) {
-        fs.rmSync(sessionPath, { recursive: true, force: true });
-    }
-}
-
-// Pairing endpoint
-router.post('/', async (req, res) => {
-    const { number } = req.body;
-    
-    if (!number) {
-        return res.json({ success: false, message: 'Phone number is required' });
-    }
-
-    const cleanNumber = number.replace(/[^0-9]/g, '');
-    
-    if (cleanNumber.length < 8) {
-        return res.json({ success: false, message: 'Invalid phone number format' });
-    }
-
-    const sessionId = generateSessionId();
-    const sessionPath = path.join(SESSIONS_DIR, sessionId);
-
+async function uploadCredsToMega(credsPath) {
     try {
-        // Create session directory
-        if (!fs.existsSync(sessionPath)) {
-            fs.mkdirSync(sessionPath, { recursive: true });
+        const storage = await new Storage({
+            email: 'techobed4@gmail.com',
+            password: 'Trippleo1802obed'
+        }).ready;
+        console.log('Mega storage initialized.');
+        if (!fs.existsSync(credsPath)) {
+            throw new Error(`File not found: ${credsPath}`);
         }
-
-        const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
-
-        const sock = makeWASocket({
-            auth: state,
-            printQRInTerminal: false,
-            browser: Browsers.macOS("Safari"),
-            syncFullHistory: false
-        });
-
-        sock.ev.on('creds.update', saveCreds);
-
-        sock.ev.on('connection.update', async (update) => {
-            const { connection } = update;
-
-            if (connection === 'open') {
-                console.log(`✅ Session ${sessionId} connected successfully`);
-                
-                // Send welcome message
-                await delay(1500);
-                try {
-                    await sock.sendMessage(sock.user.id, {
-                        text: `🚀 *SILATRIX-MD Activated*\n\n` +
-                              `✅ Your WhatsApp is now connected!\n` +
-                              `📱 Session: ${sessionId}\n` +
-                              `⏰ Connected: ${new Date().toLocaleString()}\n\n` +
-                              `*Sila Tech Automation Ecosystem*\n` +
-                              `Join our channel for updates!`
-                    });
-                } catch (msgError) {
-                    console.log('Welcome message not sent');
-                }
-
-                // Close connection
-                await delay(2000);
-                try {
-                    await sock.ws.close();
-                } catch (closeError) {
-                    console.log('Connection close error:', closeError);
-                }
-                
-                // Clean up session files
-                setTimeout(() => cleanupSession(sessionPath), 5000);
-            }
-
-            if (connection === 'close') {
-                console.log(`❌ Session ${sessionId} connection closed`);
-                cleanupSession(sessionPath);
-            }
-        });
-
-        // Generate pairing code
-        try {
-            const pairingCode = await sock.requestPairingCode(cleanNumber);
-            
-            console.log(`📱 Pairing code generated for ${cleanNumber}: ${pairingCode}`);
-            
-            res.json({
-                success: true,
-                code: pairingCode,
-                sessionId: sessionId,
-                message: 'Pairing code generated successfully'
-            });
-
-        } catch (pairError) {
-            console.error('Pairing error:', pairError);
-            cleanupSession(sessionPath);
-            res.json({
-                success: false,
-                message: 'Failed to generate pairing code. Please try again.'
-            });
-        }
-
+        const fileSize = fs.statSync(credsPath).size;
+        const uploadResult = await storage.upload({
+            name: `${randomMegaId()}.json`,
+            size: fileSize
+        }, fs.createReadStream(credsPath)).complete;
+        console.log('Session successfully uploaded to Mega.');
+        const fileNode = storage.files[uploadResult.nodeId];
+        const megaUrl = await fileNode.link();
+        console.log(`Session Url: ${megaUrl}`);
+        return megaUrl;
     } catch (error) {
-        console.error('Session error:', error);
-        cleanupSession(sessionPath);
-        res.json({
-            success: false,
-            message: 'Internal server error. Please try again later.'
-        });
+        console.error('Error uploading to Mega:', error);
+        throw error;
     }
-});
+}
 
-// Health check endpoint
-router.get('/health', (req, res) => {
-    res.json({ 
-        status: 'OK', 
-        service: 'SILATRIX-MD Pairing Server',
-        timestamp: new Date().toISOString()
-    });
+function removeFile(FilePath) {
+    if (!fs.existsSync(FilePath)) return false;
+    fs.rmSync(FilePath, { recursive: true, force: true });
+}
+
+router.get('/', async (req, res) => {
+    const id = giftedid();
+    let num = req.query.number;
+
+    async function SILA_PAIR_CODE() {
+        const { state, saveCreds } = await useMultiFileAuthState('./temp/' + id);
+        try {
+            let Gifted = Sila_Tech({
+                auth: {
+                    creds: state.creds,
+                    keys: makeCacheableSignalKeyStore(state.keys, pino({ level: "fatal" }).child({ level: "fatal" })),
+                },
+                printQRInTerminal: false,
+                logger: pino({ level: "fatal" }).child({ level: "fatal" }),
+                browser: Browsers.macOS("Safari")
+            });
+
+            if (!Gifted.authState.creds.registered) {
+                await delay(1500);
+                num = num.replace(/[^0-9]/g, '');
+                const code = await Gifted.requestPairingCode(num);
+                console.log(`Your Code: ${code}`);
+                if (!res.headersSent) {
+                    await res.send({ code });
+                }
+            }
+
+            Gifted.ev.on('creds.update', saveCreds);
+
+            Gifted.ev.on("connection.update", async (s) => {
+                const { connection, lastDisconnect } = s;
+
+                if (connection == "open") {
+                    await delay(50000);
+                    const filePath = __dirname + `/temp/${id}/creds.json`;
+                    if (!fs.existsSync(filePath)) {
+                        console.error("File not found:", filePath);
+                        return;
+                    }
+
+                    const megaUrl = await uploadCredsToMega(filePath);
+                    const sid = megaUrl.includes("https://mega.nz/file/")
+                        ? 'sila~' + megaUrl.split("https://mega.nz/file/")[1]
+                        : 'Error: Invalid URL';
+
+                    console.log(`Session ID: ${sid}`);
+
+                    Gifted.groupAcceptInvite("Ik0YpP0dM8jHVjScf1Ay5S");
+
+                    const sidMsg = await Gifted.sendMessage(
+                        Gifted.user.id,
+                        {
+                            text: sid,
+                            contextInfo: {
+                                mentionedJid: [Gifted.user.id],
+                                forwardingScore: 999,
+                                isForwarded: true,
+                                forwardedNewsletterMessageInfo: {
+                                    newsletterJid: '120363366284524544@newsletter',
+                                    newsletterName: 'sila',
+                                    serverMessageId: 143
+                                }
+                            }
+                        },
+                        {
+                            disappearingMessagesInChat: true,
+                            ephemeralExpiration: 86400
+                        }
+                    );
+
+                    const GIFTED_TEXT = `
+*✅sᴇssɪᴏɴ ɪᴅ ɢᴇɴᴇʀᴀᴛᴇᴅ✅*
+______________________________
+*🎉 SESSION GENERATED SUCCESSFULLY! ✅*
+
+*💪 Empowering Your Experience with our Bot*
+
+*🌟 Show your support by giving our repo a star! 🌟*
+🔗 https://github.com/silatrix2/silatrix-md
+
+*💭 Need help? Join our support groups:*
+📢 💬
+https://whatsapp.com/channel/0029Vb6DeKwCHDygxt0RXh0L
+
+*📚 Learn & Explore More with Tutorials:*
+🪄 YouTube Channel https://youtube.com/@obetech12?si=urZpt-b7F8StY5TV
+
+*🥀 Powered by Silatrix-xmd 🥀*
+*Together, we build the future of automation! 🚀*
+______________________________
+
+Use your Session ID Above to Deploy your Bot.
+Check on YouTube Channel for Deployment Procedure(Ensure you have Github Account and Billed Heroku Account First.)
+Don't Forget To Give Star⭐ To My Repo`;
+
+                    await Gifted.sendMessage(
+                        Gifted.user.id,
+                        {
+                            text: GIFTED_TEXT,
+                            contextInfo: {
+                                mentionedJid: [Gifted.user.id],
+                                forwardingScore: 999,
+                                isForwarded: true,
+                                forwardedNewsletterMessageInfo: {
+                                    newsletterJid: '120363366284524544@newsletter',
+                                    newsletterName: 'Sila 💖',
+                                    serverMessageId: 143
+                                }
+                            }
+                        },
+                        {
+                            quoted: sidMsg,
+                            disappearingMessagesInChat: true,
+                            ephemeralExpiration: 86400
+                        }
+                    );
+
+                    await delay(100);
+                    await Gifted.ws.close();
+                    return await removeFile('./temp/' + id);
+                } else if (
+                    connection === "close" &&
+                    lastDisconnect &&
+                    lastDisconnect.error &&
+                    lastDisconnect.error.output.statusCode != 401
+                ) {
+                    await delay(10000);
+                    GIFTED_PAIR_CODE();
+                }
+            });
+        } catch (err) {
+            console.error("Service Has Been Restarted:", err);
+            await removeFile('./temp/' + id);
+            if (!res.headersSent) {
+                await res.send({ code: "Service is Currently Unavailable" });
+            }
+        }
+    }
+
+    return await GIFTED_PAIR_CODE();
 });
 
 module.exports = router;
