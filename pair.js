@@ -1,16 +1,9 @@
-﻿const express = require('express');
+const express = require('express');
 const { makeWASocket, useMultiFileAuthState, Browsers, delay } = require('@whiskeysockets/baileys');
 const fs = require('fs');
 const path = require('path');
 
-const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Middleware
-app.use(express.json());
-app.use(express.static('public'));
-
-// Session storage
+const router = express.Router();
 const SESSIONS_DIR = './sessions';
 
 // Ensure sessions directory exists
@@ -31,7 +24,7 @@ function cleanupSession(sessionPath) {
 }
 
 // Pairing endpoint
-app.post('/pair', async (req, res) => {
+router.post('/', async (req, res) => {
     const { number } = req.body;
     
     if (!number) {
@@ -135,13 +128,8 @@ app.post('/pair', async (req, res) => {
     }
 });
 
-// Serve the main page
-app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'pair.html'));
-});
-
 // Health check endpoint
-app.get('/health', (req, res) => {
+router.get('/health', (req, res) => {
     res.json({ 
         status: 'OK', 
         service: 'SILATRIX-MD Pairing Server',
@@ -149,15 +137,4 @@ app.get('/health', (req, res) => {
     });
 });
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`🚀 SILATRIX-MD Pairing Server running on port ${PORT}`);
-    console.log(`📱 Sila Tech Channel: https://whatsapp.com/channel/0029Vb6DeKwCHDygxt0RXh0L`);
-    console.log(`🌐 Server URL: http://localhost:${PORT}`);
-});
-
-// Handle process termination
-process.on('SIGINT', () => {
-    console.log('\n🛑 Shutting down server...');
-    process.exit(0);
-});
+module.exports = router;
