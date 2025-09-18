@@ -20,7 +20,8 @@
     "axios": "^1.6.0",
     "qrcode": "^1.5.3",
     "fs-extra": "^11.1.1",
-    "body-parser": "^1.20.2"
+    "body-parser": "^1.20.2",
+    "nodemon": "^3.0.1"
   },
   "engines": {
     "node": ">=18.0.0",
